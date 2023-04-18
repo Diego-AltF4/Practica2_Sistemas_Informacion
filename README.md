@@ -1,1 +1,1 @@
-# Practica2_Sistemas_Informacion
+# Practica1_Sistemas_Informacion
