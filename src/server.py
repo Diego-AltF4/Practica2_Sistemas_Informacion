@@ -7,7 +7,7 @@ import json
 import plotly.graph_objects as go
 
 app = Flask(__name__)
-
+app.config['VERSION'] = '1.0'
 
 def getBBDD():
     conex = sqlite3.connect("Base-Datos.db")
@@ -16,14 +16,15 @@ def getBBDD():
 
 @app.route('/')
 def hello_world():
-    return '<p>Practica 2 Sistemas de Infomación</p>'
+    return render_template('index.html')
 
-@app.route('/problematicas/<rango>')
-def problematicas(rango):
-    rango = int(rango)
+
+@app.route('/direcciones', methods=['GET', 'POST'])
+def direcciones():
+    rango = request.args.get("direcciones", default=10, type=int)
+    print(rango)
     conex = getBBDD()
-    ip_problematicas = pd.read_sql_query("SELECT origen, COUNT(*) AS n FROM alerts WHERE prioridad = 1 GROUP BY origen",
-                                         conex)
+    ip_problematicas = pd.read_sql_query("SELECT origen, COUNT(*) AS n FROM alerts WHERE prioridad = 1 GROUP BY origen", conex)
     ip_problematicas = ip_problematicas.sort_values('n', ascending=False)[:rango]
     fig = go.Figure(
         data=[go.Bar(x=ip_problematicas['origen'].to_numpy(), y=ip_problematicas['n'].to_numpy())],
@@ -35,9 +36,9 @@ def problematicas(rango):
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return render_template('template.html', graphJSON=graphJSON, x=rango, caso="problemáticas")
 
-@app.route('/vulnerables/<rango>')
-def vulnerables(rango):
-    rango = int(rango)
+@app.route('/dispositivos', methods=['GET', 'POST'])
+def dispositivos():
+    rango = request.args.get('dispositivos', default=10, type=int)
     conex = getBBDD()
 
     devices_vulns = pd.read_sql_query("SELECT d.id, a.servicios_inseguros+a.vulnerabilidades_detectadas as inseguridad FROM devices AS d JOIN analisis AS a ON (d.analisis_id = a.id)", conex)
@@ -52,7 +53,6 @@ def vulnerables(rango):
     import plotly
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return render_template('template.html', graphJSON=graphJSON, x=rango, caso=None)
-
 
 
 if __name__ == '__main__':

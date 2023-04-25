@@ -1,0 +1,12 @@
+.btn {
+  margin: auto;
+}
+
+body {
+  background: var(--bs-light);
+}
+
+form {
+  margin: auto;
+}
+
