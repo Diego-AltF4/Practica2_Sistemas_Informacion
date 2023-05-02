@@ -3,9 +3,11 @@ from flask import Flask
 from flask import render_template
 from flask import request
 import pandas as pd
-import json
 import plotly.graph_objects as go
 import plotly.utils as putil
+import json
+import requests
+
 
 app = Flask(__name__)
 app.config['VERSION'] = '1.0'
@@ -89,7 +91,17 @@ def servicios(esMas, rango):
 
     return render_template('template.html', graphJSON=graphJSON, x=rango, caso=None) #TODO
 
-
+@app.route('/cves', methods=['GET'])
+def cves():
+    res = requests.get("https://cve.circl.lu/api/last").text
+    data = json.loads(res)
+    for i in range(10):
+        id = data[i]["id"]
+        summary = data[i]["summary"].strip()
+        published = data[i]["Published"]
+        print(f"id --> {id}")
+        print(f"published --> {published}")
+        print(f"summary --> {summary}")
 
 
 if __name__ == '__main__':
