@@ -65,12 +65,10 @@ def servicios():
         servicios(True, rango)
 
 def servicios(esMas, rango):
-    conex = getBBDD()
-
-    devices_peligro = pd.read_sql_query("SELECT d.id, d.ip, d.localizacion, a.servicios_inseguros, a.servicios FROM devices AS d JOIN analisis AS a ON (d.analisis_id = a.id)", conex)
-    print(devices_peligro)
-
     devices_resultado = []
+    conex = getBBDD()
+    devices_peligro = pd.read_sql_query("SELECT d.id, d.ip, d.localizacion, a.servicios_inseguros, a.servicios FROM devices AS d JOIN analisis AS a ON (d.analisis_id = a.id)", conex)
+    
     for i in range(len(devices_peligro['id'])):
         device = {'id':devices_peligro['id'][i],'ip':devices_peligro['ip'][i],'localizacion':devices_peligro['localizacion'][i],'ratio':0}
 
@@ -78,31 +76,29 @@ def servicios(esMas, rango):
             rate = 0
         else:
             rate = devices_peligro['servicios_inseguros'][i]/devices_peligro['servicios'][i]
+
         if esMas and rate>0.33:
             device['ratio'] = rate
             devices_resultado.append(device)
         if not esMas and rate<0.33:
             device['ratio'] = rate
             devices_resultado.append(device)
-    
+
     devices_resultado = sorted(devices_resultado, key=lambda d:d['ratio'], reverse=esMas)[:rango]
-
-    print(devices_resultado)
-
-    return render_template('template.html', graphJSON=graphJSON, x=rango, caso=None) #TODO
+    return render_template('servicios.html', dispositivos=devices_resultado)
 
 @app.route('/cves', methods=['GET'])
 def cves():
+    cves_resultado = []
     res = requests.get("https://cve.circl.lu/api/last").text
     data = json.loads(res)
-    for i in range(10):
-        id = data[i]["id"]
-        summary = data[i]["summary"].strip()
-        published = data[i]["Published"]
-        print(f"id --> {id}")
-        print(f"published --> {published}")
-        print(f"summary --> {summary}")
+    data = sorted(data, key=lambda d:d['Published'], reverse=True)[:10]
 
+    for i in range(10):
+        cve = {'id':data[i]["id"],'summary':data[i]["summary"].strip(),'published':data[i]["Published"]}
+        cves_resultado.append(cve)
+
+    return render_template('cves.html', vulnerabilidades=cves_resultado) # TODO
 
 if __name__ == '__main__':
     app.run(debug=True)
