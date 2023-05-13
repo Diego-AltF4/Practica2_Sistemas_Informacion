@@ -12,6 +12,7 @@ import requests
 app = Flask(__name__)
 app.config['VERSION'] = '1.0'
 
+
 def getBBDD():
     conex = sqlite3.connect("Base-Datos.db")
     return conex
@@ -19,13 +20,15 @@ def getBBDD():
 
 @app.route('/')
 def hello_world():
-    return render_template('index.html')
+    graphDir = direcciones()
+    graphDev = dispositivos()
+    graphServicios = servicios(False, 10)
+    return render_template('index.html', graphDir=graphDir, graphDev=graphDev, graphServicios=graphServicios)
 
 
 @app.route('/direcciones', methods=['GET'])
 def direcciones():
     rango = request.args.get("direcciones", default=10, type=int)
-    print(rango)
     conex = getBBDD()
     ip_problematicas = pd.read_sql_query("SELECT origen, COUNT(*) AS n FROM alerts WHERE prioridad = 1 GROUP BY origen", conex)
     ip_problematicas = ip_problematicas.sort_values('n', ascending=False)[:rango]
@@ -36,7 +39,8 @@ def direcciones():
     fig.update_xaxes(title_text="IPs origen")
     fig.update_yaxes(title_text="Número de alertas")
     graphJSON = json.dumps(fig, cls=putil.PlotlyJSONEncoder)
-    return render_template('template.html', graphJSON=graphJSON, x=rango, caso="problemáticas")
+    return graphJSON
+
 
 @app.route('/dispositivos', methods=['GET'])
 def dispositivos():
@@ -53,7 +57,8 @@ def dispositivos():
     fig.update_xaxes(title_text="Dispositivos")
     fig.update_yaxes(title_text="Número de vulnerabilidades")
     graphJSON = json.dumps(fig, cls=putil.PlotlyJSONEncoder)
-    return render_template('template.html', graphJSON=graphJSON, x=rango, caso=None)
+    return graphJSON
+
 
 @app.route('/servicios', methods=['GET'])
 def servicios():
@@ -63,6 +68,7 @@ def servicios():
         servicios(False, rango)
     else:
         servicios(True, rango)
+
 
 def servicios(esMas, rango):
     devices_resultado = []
@@ -85,7 +91,8 @@ def servicios(esMas, rango):
             devices_resultado.append(device)
 
     devices_resultado = sorted(devices_resultado, key=lambda d:d['ratio'], reverse=esMas)[:rango]
-    return render_template('servicios.html', dispositivos=devices_resultado)
+    return devices_resultado
+
 
 @app.route('/cves', methods=['GET'])
 def cves():
@@ -98,7 +105,8 @@ def cves():
         cve = {'id':data[i]["id"],'summary':data[i]["summary"].strip(),'published':data[i]["Published"]}
         cves_resultado.append(cve)
 
-    return render_template('cves.html', vulnerabilidades=cves_resultado) # TODO
+    return render_template('cves.html', vulnerabilidades=cves_resultado)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
