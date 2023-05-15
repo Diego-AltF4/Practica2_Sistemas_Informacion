@@ -109,6 +109,18 @@ def cves():
 
     return cves_resultado
 
+@app.route('/news', methods=['GET'])
+def news():
+    res = requests.get("https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty").text.strip().replace('[','').replace(']','').split(',')
+    noticias = []
+    for i in range(30):
+        id = int(res[i])
+        res2 = requests.get(f"https://hacker-news.firebaseio.com/v0/item/{id}.json?print=pretty").text
+        data = json.loads(res2)
+        noticia = {'title':data["title"],'url':data["url"].strip(),'by':data["by"]}
+        noticias.append(noticia)
+
+    return noticias
 
 if __name__ == '__main__':
     app.run(debug=True)
