@@ -1,7 +1,7 @@
 
 function updateDir() {
     var nDirecciones = document.getElementById("direcciones").value;
-    if (nDirecciones === undefined) {
+    if (!nDirecciones) {
         nDirecciones = 10;
     }
     var request = "/direcciones?direcciones=" + nDirecciones
@@ -15,8 +15,8 @@ function updateDir() {
 
 function updateDev() {
     var nDispositivos = document.getElementById("dispositivos").value;
-    if (nDispositivos === undefined) {
-        nDispositivos = 10;
+    if (!nDispositivos) {
+        nDispositivos = 7;
     }
     var request = "/dispositivos?dispositivos=" + nDispositivos
     Plotly.d3.json(request, function(error, data) {
@@ -83,6 +83,11 @@ function updateServiciosMenos() {
 }
 
 function cveDisplay() {
+    document.getElementById("procesandoCVE").style.display = "block";
+    cveDisplayFetch();
+}
+
+function cveDisplayFetch() {
     fetch("/cves")
         .then(function (response) {
             if (response.ok) {
@@ -96,13 +101,20 @@ function cveDisplay() {
                 resizableColumnFit:true,
                 layout:"fitDataStretch"
             });
+            document.getElementById("procesandoCVE").style.display = "none";
         })
         .catch(function (error) {
             console.error(error);
         });
+
 }
 
 function newsDisplay() {
+    document.getElementById("procesandoNews").style.display = "block";
+    newsDisplayFetch();
+}
+
+function newsDisplayFetch() {
     fetch("/news")
         .then(function (response) {
             if (response.ok) {
@@ -117,8 +129,8 @@ function newsDisplay() {
                 layout:"fitDataStretch",
                 pagination:"local",
                 paginationSize:10,
-
             });
+            document.getElementById("procesandoNews").style.display = "none";
         })
         .catch(function (error) {
             console.error(error);

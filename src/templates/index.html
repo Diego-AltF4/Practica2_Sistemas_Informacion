@@ -20,6 +20,8 @@
     <script src="{{ url_for('static', filename='js/tabulator.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/plot-updates.js') }}"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://unpkg.com/tabulator-tables@5.4.4/dist/css/tabulator.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.4.4/dist/js/tabulator.min.js"></script>
     <!-- Custom styles for this template-->
     <link href="{{ url_for('static', filename='css/sb-admin-2.min.css') }}" rel="stylesheet">
 
@@ -271,16 +273,9 @@
                                 </div>
                                 <div class="card-body">
                                     <div id="cve-table"></div>
-                                    <link href="https://unpkg.com/tabulator-tables@5.4.4/dist/css/tabulator.min.css" rel="stylesheet">
-                                    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.4.4/dist/js/tabulator.min.js"></script>
-                                    <script>
-                                        var tabledata = {{cves | safe}}
-                                        var table = new Tabulator("#cve-table", {
-                                            data:tabledata,
-                                            autoColumns:true,
-                                            resizableColumnFit:true
-                                        });
-                                    </script>
+                                    <p style="display: none" id="procesandoCVE">
+                                        Procesando...
+                                    </p>
                                 </div>
                             </div>
 
@@ -298,6 +293,28 @@
                                 </div>
                                 <div class="card-body">
                                     <div id="news-table"></div>
+                                    <p style="display: none" id="procesandoNews">
+                                        Procesando...
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">Machine Learning</h6>
+                                    <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                                        Regresión Lineal
+                                    </button>
+                                    <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                                        Decision Tree
+                                    </button>
+                                    <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                                        Random Forest
+                                    </button>
+                                </div>
+                                <div class="card-body">
+
                                 </div>
                             </div>
                         </div>
