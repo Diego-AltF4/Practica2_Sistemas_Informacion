@@ -22,8 +22,9 @@ def getBBDD():
 def hello_world():
     graphDir = direcciones()
     graphDev = dispositivos()
-    graphServicios = servicios(False, 10)
-    return render_template('index.html', graphDir=graphDir, graphDev=graphDev, graphServicios=graphServicios)
+    services = servicios(True, 3)
+    #cve = cves()
+    return render_template('index.html', graphDir=graphDir, graphDev=graphDev, services=services)
 
 
 @app.route('/direcciones', methods=['GET'])
@@ -60,14 +61,14 @@ def dispositivos():
     return graphJSON
 
 
-@app.route('/servicios', methods=['GET'])
-def servicios():
-    rango = request.args.get('servicios', default=10, type=int)
+@app.route('/servicios/<rango>')
+def servicios(rango):
+    rango = int(rango)
     valorServicio = request.args.get('valorServicio', type=int)
     if valorServicio == 0:
-        servicios(False, rango)
+        return servicios(False, rango)
     else:
-        servicios(True, rango)
+        return servicios(True, rango)
 
 
 def servicios(esMas, rango):
@@ -76,22 +77,23 @@ def servicios(esMas, rango):
     devices_peligro = pd.read_sql_query("SELECT d.id, d.ip, d.localizacion, a.servicios_inseguros, a.servicios FROM devices AS d JOIN analisis AS a ON (d.analisis_id = a.id)", conex)
     
     for i in range(len(devices_peligro['id'])):
-        device = {'id':devices_peligro['id'][i],'ip':devices_peligro['ip'][i],'localizacion':devices_peligro['localizacion'][i],'ratio':0}
+        device = {'id': devices_peligro['id'][i], 'ip': devices_peligro['ip'][i], 'localizacion': devices_peligro['localizacion'][i], 'ratio': 0}
 
         if devices_peligro['servicios'][i] == 0:
             rate = 0
         else:
             rate = devices_peligro['servicios_inseguros'][i]/devices_peligro['servicios'][i]
 
-        if esMas and rate>0.33:
-            device['ratio'] = rate
+        if esMas and rate > 0.33:
+            device['ratio'] = round(rate, 3)
             devices_resultado.append(device)
-        if not esMas and rate<0.33:
-            device['ratio'] = rate
+        if not esMas and rate < 0.33:
+            device['ratio'] = round(rate, 3)
             devices_resultado.append(device)
 
-    devices_resultado = sorted(devices_resultado, key=lambda d:d['ratio'], reverse=esMas)[:rango]
-    return devices_resultado
+    devices_resultado = sorted(devices_resultado, key=lambda d: d['ratio'], reverse=esMas)[:rango]
+    devices_json = json.dumps(devices_resultado)
+    return devices_json
 
 
 @app.route('/cves', methods=['GET'])
@@ -102,10 +104,10 @@ def cves():
     data = sorted(data, key=lambda d:d['Published'], reverse=True)[:10]
 
     for i in range(10):
-        cve = {'id':data[i]["id"],'summary':data[i]["summary"].strip(),'published':data[i]["Published"]}
+        cve = {'id': data[i]["id"], 'published': data[i]["Published"], 'summary': data[i]["summary"].strip()[:107] + "..."}
         cves_resultado.append(cve)
 
-    return render_template('cves.html', vulnerabilidades=cves_resultado)
+    return cves_resultado
 
 
 if __name__ == '__main__':

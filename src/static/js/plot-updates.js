@@ -11,7 +11,6 @@ function updateDir() {
     });
     document.getElementById("displayDir").innerHTML = "Top " + nDirecciones + " direcciones";
 
-
 }
 
 function updateDev() {
@@ -26,5 +25,79 @@ function updateDev() {
     });
     document.getElementById("displayDispositivos").innerHTML = "Top " + nDispositivos + " dispositivos";
 
+}
 
+function updateServiciosMas() {
+    var rango = document.getElementById("updateServicios").value;
+    if (!rango) {
+        rango = 3;
+    }
+    var request = "/servicios/" + rango + "?valorServicio=1";
+    servicio = false;
+    fetch(request)
+        .then(function (response) {
+            if (response.ok) {
+                return response.json();
+            }
+        })
+        .then(function (data) {
+            var table = new Tabulator("#services-table", {
+                data:data,
+                autoColumns:true,
+                resizableColumnFit:true,
+                layout:"fitDataStretch"
+            });
+        })
+        .catch(function (error) {
+            console.error(error);
+        });
+
+}
+
+function updateServiciosMenos() {
+    var rango = document.getElementById("updateServicios").value;
+    if (!rango) {
+        rango = 3;
+    }
+    var request = "/servicios/" + rango + "?valorServicio=0";
+    servicio = true;
+
+    fetch(request)
+        .then(function (response) {
+            if (response.ok) {
+                return response.json();
+            }
+        })
+        .then(function (data) {
+            var table = new Tabulator("#services-table", {
+                data:data,
+                autoColumns:true,
+                resizableColumnFit:true,
+                layout:"fitDataStretch"
+            });
+        })
+        .catch(function (error) {
+            console.error(error);
+        });
+
+}
+
+function cveDisplay() {
+    fetch("/cves")
+        .then(function (response) {
+            if (response.ok) {
+                return response.json();
+            }
+        })
+        .then(function (data) {
+            var table = new Tabulator("#cve-table", {
+                data:data,
+                autoColumns:true,
+                resizableColumnFit:true,
+                layout:"fitDataStretch"
+            });
+        })
+        .catch(function (error) {
+            console.error(error);
+        });
 }
