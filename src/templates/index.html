@@ -223,7 +223,7 @@
                         <div class="col-lg-6 mb-4">
 
                             <!-- Project Card Example -->
-                            <div class="card shadow mb-4">
+                            <div class="card shadow mb-4" style="width: auto">
                                 <div class="card-header py-3">
                                     <h6 class="m-0 font-weight-bold text-primary">Servicios</h6>
                                     <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
@@ -285,15 +285,21 @@
                             </div>
 
                             <!-- Approach -->
+
+
+                        </div>
+                        <div class="col-12">
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">ML</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Hacker News</h6>
+                                    <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" onclick="newsDisplay()">
+                                        Cargar datos
+                                    </button>
                                 </div>
                                 <div class="card-body">
-
+                                    <div id="news-table"></div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
 

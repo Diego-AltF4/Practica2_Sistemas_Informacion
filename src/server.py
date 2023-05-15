@@ -117,7 +117,7 @@ def news():
         id = int(res[i])
         res2 = requests.get(f"https://hacker-news.firebaseio.com/v0/item/{id}.json?print=pretty").text
         data = json.loads(res2)
-        noticia = {'title':data["title"],'url':data["url"].strip(),'by':data["by"]}
+        noticia = {'title': data["title"], 'url': data["url"].strip(), 'author': data["by"]}
         noticias.append(noticia)
 
     return noticias

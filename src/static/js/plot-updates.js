@@ -101,3 +101,26 @@ function cveDisplay() {
             console.error(error);
         });
 }
+
+function newsDisplay() {
+    fetch("/news")
+        .then(function (response) {
+            if (response.ok) {
+                return response.json();
+            }
+        })
+        .then(function (data) {
+            var table = new Tabulator("#news-table", {
+                data:data,
+                autoColumns:true,
+                resizableColumnFit:true,
+                layout:"fitDataStretch",
+                pagination:"local",
+                paginationSize:10,
+
+            });
+        })
+        .catch(function (error) {
+            console.error(error);
+        });
+}

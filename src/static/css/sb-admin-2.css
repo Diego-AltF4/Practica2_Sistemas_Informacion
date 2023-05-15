@@ -4524,7 +4524,7 @@ input[type="button"].btn-block {
 
 .card-body {
   flex: 1 1 auto;
-  min-height: 1px;
+  min-height: 487px;
   padding: 1.25rem;
 }
 
@@ -4554,6 +4554,7 @@ input[type="button"].btn-block {
   margin-bottom: 0;
   background-color: #f8f9fc;
   border-bottom: 1px solid #e3e6f0;
+  min-height: 91px;
 }
 
 .card-header:first-child {
