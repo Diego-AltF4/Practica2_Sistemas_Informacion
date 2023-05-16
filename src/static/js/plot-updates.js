@@ -33,7 +33,6 @@ function updateServiciosMas() {
         rango = 3;
     }
     var request = "/servicios/" + rango + "?valorServicio=1";
-    servicio = false;
     fetch(request)
         .then(function (response) {
             if (response.ok) {
@@ -60,8 +59,6 @@ function updateServiciosMenos() {
         rango = 3;
     }
     var request = "/servicios/" + rango + "?valorServicio=0";
-    servicio = true;
-
     fetch(request)
         .then(function (response) {
             if (response.ok) {
